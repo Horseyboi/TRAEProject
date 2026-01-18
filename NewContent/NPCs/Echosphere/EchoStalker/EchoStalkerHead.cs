@@ -7,10 +7,14 @@ using System.Linq;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
+using TRAEProject.NewContent.Items.Materials;
+
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using TRAEProject.NewContent.NPCs.Echosphere.EchoStalker.Gore;
+ using TRAEProject.NewContent.NPCs.Echosphere.EchoStalker.Gore;
 using TRAEProject.NewContent.Projectiles;
+using static Terraria.ModLoader.ModContent;
 
 namespace TRAEProject.NewContent.NPCs.Echosphere.EchoStalker
 {
@@ -68,10 +72,17 @@ namespace TRAEProject.NewContent.NPCs.Echosphere.EchoStalker
             NPC.lifeMax = 1500;
             NPC.defense = 15;
             NPC.damage = 70;
+            NPC.value = 100 * 10;
+
             NPC.knockBackResist = 0;
             NPC.HitSound = HitSFX;
             NPC.DeathSound = DeathSFX;
         }
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
+        {
+            npcLoot.Add(ItemDropRule.Common(ItemType<EchoHeart>(), 2, 1, 1));
+
+         }
         static int[] OrderOfSegmentIDsToSpawn => [ModContent.NPCType<EchoStalkerBody1>(),
                ModContent.NPCType<EchoStalkerBody2>(), ModContent.NPCType<EchoStalkerBody2>(),
              ModContent.NPCType<EchoStalkerTail>()];
@@ -152,6 +163,7 @@ namespace TRAEProject.NewContent.NPCs.Echosphere.EchoStalker
         {
             return MathF.Abs(vec.X) + MathF.Abs(vec.Y);
         }
+        
         void Movement(Player player)
         {
 
@@ -443,6 +455,10 @@ namespace TRAEProject.NewContent.NPCs.Echosphere.EchoStalker
                 segments[i].alpha = NPC.alpha;
                 lengthAcross += segmentWidths[i];
                 lastSegmentCenter = segmentCenter;
+                if (NPC.target == -1 || NPC.target >= Main.maxPlayers)
+                {
+                    curSegment.dontTakeDamage = true;
+                }
                 EchoStalkerBody1.SetPurpleGlowinessAmount(segments[i], purpleGlowiness);
             }
         }
